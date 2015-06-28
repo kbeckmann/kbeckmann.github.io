@@ -59,9 +59,10 @@ social:
   GitHub: "https://github.com/kbeckmann"
   Twitter: "https://twitter.com/kbeckmann"
 
-disqus:
-   enable: true
-   shortname: happychips
+#disqus:
+#   enable: true
+#   shortname: happychips
+disqus_shortname: "happychips"
 
 fancybox: true
 since: 2015
