@@ -67,6 +67,12 @@ fancybox: true
 since: 2015
 avatar: "https://avatars1.githubusercontent.com/u/3134352?v=3&s=460"
 
+# RSS
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
