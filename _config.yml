@@ -59,7 +59,8 @@ toc_list_number: true
 
 # Use Lato font
 # Note: this option is avialable only when the language is not `zh-Hans`
-use_font_lato: true
+#use_font_lato: true
+use_font_lato: false
 
 
 ## DO NOT EDIT THE FOLLOWING SETTINGS
@@ -80,5 +81,3 @@ images: images
 # Theme version
 version: 0.4.3
 
-
-language: en
