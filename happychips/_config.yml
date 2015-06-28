@@ -16,6 +16,7 @@ url: https://kbeckmann.github.io/
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
+rss:
 
 # Directory
 source_dir: source
@@ -47,6 +48,24 @@ highlight:
 default_category: uncategorized
 category_map:
 tag_map:
+
+# theme configuration
+menu:
+  home: /
+  archives: /archives
+  tags: /tags
+
+social:
+  GitHub: "https://github.com/kbeckmann"
+  Twitter: "https://twitter.com/kbeckmann"
+
+disqus:
+   enable: true
+   shortname: happychips
+
+fancybox: true
+since: 2015
+avatar: "https://avatars1.githubusercontent.com/u/3134352?v=3&s=460"
 
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
