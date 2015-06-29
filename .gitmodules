@@ -1,4 +1,4 @@
 [submodule "hexo-theme-next"]
 	path = happychips/themes/hexo-theme-next
-	url = git@github.com:kbeckmann/kbeckmann.github.io.git
+	url = https://github.com/kbeckmann/kbeckmann.github.io.git
 	branch = hexo-theme-next
