@@ -1,7 +1,10 @@
 language: node_js
 
 script:
-  - env
+  - mkdir ~/.ssh
+  - echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa
+  - echo $HEHU >> ~/.ssh/id_rsa 
+  - echo "-----END RSA PRIVATE KEY-----" > ~/.ssh/id_rsa
   - git config --global user.email "travis-ci@travis-ci.org"
   - git config --global user.name "Travis-ci"
   - (cd happychips && npm install)
