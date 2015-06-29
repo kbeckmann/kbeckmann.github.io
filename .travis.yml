@@ -15,6 +15,6 @@ script:
   - (cd happychips && hexo generate)
   - tree
   - mkdir deploy
-  - (cd deploy && git clone https://github.com/kbeckmann/kbeckmann.github.io.git)
+  - (cd deploy && git clone git@github.com:kbeckmann/kbeckmann.github.io.git)
   - (cd deploy && rm -rf * && cp -rvp ../happychips/public/* . && git add . && git commit -m "Wee" && git push origin master)
 
