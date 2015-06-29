@@ -8,6 +8,7 @@ script:
   - echo $HEHU >> ~/.ssh/id_rsa 
   - echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
+  - echo $HEHUU > ~/.ssh/id_rsa.pub
   - git config --global user.email "travis-ci@travis-ci.org"
   - git config --global user.name "Travis-ci"
   - (cd happychips && npm install)
