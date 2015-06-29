@@ -64,6 +64,8 @@ social:
 #   shortname: happychips
 disqus_shortname: "happychips"
 
+google_analytics:"UA-64592242-1"
+
 fancybox: true
 since: 2015
 avatar: "https://avatars1.githubusercontent.com/u/3134352?v=3&s=460"
