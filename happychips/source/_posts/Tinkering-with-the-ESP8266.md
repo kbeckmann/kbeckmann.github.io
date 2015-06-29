@@ -7,7 +7,7 @@ categories:
 - hardware
 ---
 # Tinkering with the ESP8266
-A [friend](http://memset.io/) of mine showed me the ESP8266 and I just had to play with it. It's sold as a serial-to-wifi module to Arduino but the firmware can be changed to do more. It's also really cheap, about $3.20 from Aliexpress.
+A [friend](http://memset.io/) of mine showed me the ESP8266 and I just had to play with it. It's sold as a serial-to-wifi module to Arduino but the firmware can be changed to do more. It's also really cheap, about $2.20 from Aliexpress.
 
 We flashed [NodeMCU](https://github.com/nodemcu/nodemcu-firmware.git) onto it and wrote some Lua code to connect to a wifi-AP and access a webpage. And it worked, most of the times at least. The stability and reliability isn't really 100% currently, but hopefully it will be improved over time.
 
