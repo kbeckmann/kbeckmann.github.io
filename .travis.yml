@@ -2,4 +2,4 @@ language: node_js
 
 script:
   - (cd happychips && npm install)
-  - (cd happychips && hexo generate)
+  - (cd happychips && hexo generate --deploy)
