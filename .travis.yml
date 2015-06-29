@@ -5,9 +5,9 @@ script:
 #  - echo "Host *" > ~/.ssh/config
 #  - echo "  BatchMode yes" >> ~/.ssh/config
   - echo $HEHU > ~/.ssh/id_rsa_new
-  - echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa_new
+  - echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa
   - fold -w 64 ~/.ssh/id_rsa_new >> ~/.ssh/id_rsa
-  - echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa_new
+  - echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
   - echo $HEHUU > ~/.ssh/id_rsa.pub
   - git config --global user.email "travis-ci@travis-ci.org"
