@@ -1,6 +1,7 @@
 language: node_js
 
 script:
+  - env
   - git config --global user.email "travis-ci@travis-ci.org"
   - git config --global user.name "Travis-ci"
   - (cd happychips && npm install)
