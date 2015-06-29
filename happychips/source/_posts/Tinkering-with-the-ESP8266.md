@@ -36,11 +36,11 @@ After flashing NodeMCU, it's time for some Lua scripting. It's possible to just 
 There's an IDE called [esplorer](https://github.com/4refr0nt/ESPlorer) that helps you out. It's pretty basic and written in java, but it gets the job done. There's also an [AUR package](https://aur.archlinux.org/packages/esplorer/) for it so you can install it quickly if you run Arch.
 
 {% codeblock lang:lua %}
-- Connect to a wifi-ap
+-- Connect to a wifi-ap
 wifi.setmode(wifi.STATION)
 wifi.sta.config("your-ssid", "password")
 
-- Set a timer with 500ms delay and check if we've got an IP-address
+-- Set a timer with 500ms delay and check if we've got an IP-address
 tmr.alarm(0, 500, 1, function()
     if wifi.sta.getip() == nil then
         print("No ip yet")
@@ -51,11 +51,11 @@ tmr.alarm(0, 500, 1, function()
     end
 end)
 
-- Register an interrupt on GPIO pin 3 (it's called GPIO0 on the board)
-- "both" is used because it seems to work better than simply "up". 
-- This means that the callback is called whenever the pin goes high or low.
-- Not sure if it's because of a bug in the firmware or I just had bad luck
-- when testing.
+-- Register an interrupt on GPIO pin 3 (it's called GPIO0 on the board)
+-- "both" is used because it seems to work better than simply "up". 
+-- This means that the callback is called whenever the pin goes high or low.
+-- Not sure if it's because of a bug in the firmware or I just had bad luck
+-- when testing.
 function reg_gpio()
 gpio.mode(3, gpio.INT)
 gpio.trig(3, "both", function(level)
@@ -66,7 +66,7 @@ gpio.trig(3, "both", function(level)
     end)
 end
 
-- A simple HTTP GET call. Not optimal but works.
+-- A simple HTTP GET call. Not optimal but works.
 function http_get(host_addr, port, host_name, path)
     print("http_get()")
     sk=net.createConnection(net.TCP, 0)
