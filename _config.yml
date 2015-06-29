@@ -62,6 +62,7 @@ toc_list_number: true
 #use_font_lato: true
 use_font_lato: false
 
+google_analytics: "UA-64592242-1"
 
 ## DO NOT EDIT THE FOLLOWING SETTINGS
 ## UNLESS YOU KNOW WHAT YOU ARE DOING
