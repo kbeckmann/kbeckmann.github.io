@@ -2,21 +2,22 @@ language: node_js
 
 script:
   - cat /etc/ssh/ssh_config
-  - echo "Host *" > ~/.ssh/config
-  - echo "  BatchMode yes" >> ~/.ssh/config
+#  - echo "Host *" > ~/.ssh/config
+#  - echo "  BatchMode yes" >> ~/.ssh/config
+  - echo $HEHU > ~/.ssh/id_rsa_new
   - echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa_new
-  - echo $HEHU >> ~/.ssh/id_rsa_new
+  - fold -w 64 ~/.ssh/id_rsa_new >> ~/.ssh/id_rsa
   - echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa_new
-  - chmod 600 ~/.ssh/id_rsa_new
-  - echo $HEHUU > ~/.ssh/id_rsa_new.pub
+  - chmod 600 ~/.ssh/id_rsa
+  - echo $HEHUU > ~/.ssh/id_rsa.pub
   - git config --global user.email "travis-ci@travis-ci.org"
   - git config --global user.name "Travis-ci"
   - (cd happychips && npm install)
-  - (cd happychips && hexo generate)
-  - tree
-  - mkdir deploy
-  - (cd deploy && ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa_new; git clone git@github.com:kbeckmann/kbeckmann.github.io.git')
-  - (cd deploy && git rm -rf * && cp -rvp ../happychips/public/* . && git add . && git commit -m "Wee")
-  - (cd deploy && git remote set-url origin git@github.com:kbeckmann/kbeckmann.github.io.git)
-  - (cd deploy && ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa_new; git push origin mastert')
+  - (cd happychips && hexo generate --deploy)
+#  - tree
+#  - mkdir deploy
+#  - (cd deploy && ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa_new; git clone git@github.com:kbeckmann/kbeckmann.github.io.git')
+#  - (cd deploy && git rm -rf * && cp -rvp ../happychips/public/* . && git add . && git commit -m "Wee")
+#  - (cd deploy && git remote set-url origin git@github.com:kbeckmann/kbeckmann.github.io.git)
+#  - (cd deploy && ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa_new; git push origin mastert')
 
