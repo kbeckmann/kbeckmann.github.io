@@ -9,5 +9,6 @@ script:
   - chmod 600 ~/.ssh/id_rsa
   - git config --global user.email "travis-ci@travis-ci.org"
   - git config --global user.name "Travis-ci"
+  - (cd happychips/themes/hexo-theme-next && git fetch && git checkout hexo-theme-next)
   - (cd happychips && npm install)
   - (cd happychips && hexo generate --deploy)
