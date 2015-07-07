@@ -61,7 +61,7 @@ gpio.mode(3, gpio.INT)
 gpio.trig(3, "both", function(level)
         print("both: 3  " .. level)
         if level == 1 then
-            http_get("192.168.5.102", 80, "k.xil.se", "/")
+            http_get("google.com", 80, "google.com", "/")
         end
     end)
 end
