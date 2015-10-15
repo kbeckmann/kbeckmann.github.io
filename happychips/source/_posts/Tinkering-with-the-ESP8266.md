@@ -61,19 +61,19 @@ gpio.mode(3, gpio.INT)
 gpio.trig(3, "both", function(level)
         print("both: 3  " .. level)
         if level == 1 then
-            http_get("google.com", 80, "google.com", "/")
+            http_get("192.168.0.1", 80, "192.168.0.1", "/")
         end
     end)
 end
 
 -- A simple HTTP GET call. Not optimal but works.
-function http_get(host_addr, port, host_name, path)
+function http_get(host_addr, port, hostname, path)
     print("http_get()")
     sk=net.createConnection(net.TCP, 0)
     sk:on("receive", function(sck, c) print(c) end )
     sk:connect(port, host_addr)
     request = "GET " .. path .. " HTTP/1.1\r\n" ..
-    "Host: " .. host_name .. "\r\n" ..
+    "Host: " .. hostname .. "\r\n" ..
     "Connection: close\r\nAccept: */*\r\n\r\n"
     print(request)
     sk:send(request)
