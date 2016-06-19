@@ -4,4 +4,4 @@
 	branch = hexo-theme-next
 [submodule "happychips/source/nfc-antenna-generator"]
 	path = happychips/source/nfc-antenna-generator
-	url = git@github.com:kbeckmann/nfc-antenna-generator.git
+	url = https://github.com/kbeckmann/nfc-antenna-generator.git
