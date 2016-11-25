@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Morse all the things!</title>
+        <link rel="stylesheet" href="./bootstrap.min.css">
+      </head>
+    <body>
+        <h1>Morse is nice. Make some noise!</h1>
+        <p>Type your message below, press enter to transmit. Hold down shift to silence other transmitting signals.</p>
+        <form>
+            <input
+                type="text"
+                id="message"
+                placeholder="Write message, press enter to generate sound"
+                style="width:400"
+            />
+            <input
+                type="text"
+                id="frequency"
+                placeholder="Hz (default:1000)"
+                style="width:150"
+            />
+            <input
+                type="text"
+                id="wpm"
+                placeholder="Words/minute (default:100)"
+                style="width:200"
+            />
+            <input
+                type="text"
+                id="attack"
+                placeholder="Attack (50)"
+                style="width:150"
+            />
+            <input
+                type="text"
+                id="decay"
+                placeholder="Decay (50)"
+                style="width:150"
+            />
+        </form>
+        <script type="text/javascript" src="./bundle.js"></script>
+    </body>
+</html>
