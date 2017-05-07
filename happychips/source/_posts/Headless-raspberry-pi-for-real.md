@@ -79,7 +79,7 @@ $ sudo ln -s /lib/systemd/system/getty@.service getty@ttyGS0.service
 $ cd ../../../../..; sync; sudo umount boot root
 ```
 
-Remove the sd-card and insert it in your Pi, connect an USB cable in the "USB Data port", then connect it to your computer. Run `journalctl -f` on your host machine to see what happens then the Pi boots. After a while, you will probably end up seeing
+Remove the sd-card and insert it in your Pi, connect a USB cable in the "USB Data port", then connect it to your computer. Run `journalctl -f` on your host machine to see what happens then the Pi boots. After a while, you will probably end up seeing
 ```
 May 06 21:04:54 bacon kernel: cdc_acm 1-2:2.0: ttyACM0: USB ACM device
 ```
