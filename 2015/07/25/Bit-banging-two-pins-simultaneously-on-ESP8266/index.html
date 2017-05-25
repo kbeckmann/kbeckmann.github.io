@@ -1,0 +1,615 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+
+
+  <meta name="keywords" content="esp8266," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Happychips" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: 'UA-64592242-1'
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Bit-banging two pins simultaneously on ESP8266 // Happychips </title>
+</head>
+
+<body>
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Happychips</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<div class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            <i class="menu-item-icon icon-home"></i> <br />
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            <i class="menu-item-icon icon-about"></i> <br />
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            Tags
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              Bit-banging two pins simultaneously on ESP8266
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2015-07-25
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; In
+            
+              <a href="/categories/hardware/">hardware</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p>I’m currently building an 8 x 144 LED panel using ws2812 LED-strips. That results in 27648 bits per frame. With an optimal driver it takes a constant time of 34.56ms per frame (27648 bits * 1.25us per bit). Even if I spend every single clock cycle pushing pixels, I can only reach 29 fps. But I want to do other stuff with my ESP8266 as well.</p>
+<p>A solution to get higher frame rate is to simply reduce the number of LEDs to control via the same data pin and use multiple pins instead. The tricky part is to get the timing right.</p>
+<p>Since the ESP8266 is quite fast it is possible to use two pins and get the timing right.</p>
+<p>Here’s the code that I came up with and it works pretty well. I get my high framerate and it’s really smooth. <a href="https://github.com/kbeckmann/nodemcu-firmware/blob/ws2812-dual/app/modules/ws2812.c#L135" target="_blank" rel="external">Full code here</a>.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">void</span> ICACHE_RAM_ATTR __attribute__((optimize(<span class="string">"O2"</span>))) ws2812_writedual(</div><div class="line">    <span class="keyword">uint8_t</span> pin_a, <span class="keyword">uint8_t</span> pin_b, <span class="keyword">uint8_t</span> *pixels, <span class="keyword">uint32_t</span> num_bytes) &#123;</div><div class="line">  <span class="keyword">uint8_t</span> *p1, *p2, *end, pix_a, pix_b, mask;</div><div class="line">  <span class="keyword">uint32_t</span> t, t0h, t1h, t01h, ttot, c, start_time;</div><div class="line">  <span class="keyword">uint32_t</span> pin_mask_a, pin_mask_b, pin_mask_ab, bits;</div><div class="line"></div><div class="line">  pin_mask_a = <span class="number">1</span> &lt;&lt; pin_a;</div><div class="line">  pin_mask_b = <span class="number">1</span> &lt;&lt; pin_b;</div><div class="line">  pin_mask_ab = pin_mask_a | pin_mask_b;</div><div class="line">  p1 = pixels;</div><div class="line">  p2 = pixels + num_bytes / <span class="number">2</span>;</div><div class="line">  end = p1 + num_bytes / <span class="number">2</span>;</div><div class="line">  pix_a = *p1++;</div><div class="line">  pix_b = *p2++;</div><div class="line">  mask = <span class="number">0x80</span>;</div><div class="line">  start_time = _getCycleCount();</div><div class="line">  t0h  = (<span class="number">1000</span> * system_get_cpu_freq()) / <span class="number">2857</span>;  <span class="comment">// 0.35us (spec=0.35 +- 0.15)</span></div><div class="line">  t1h  = (<span class="number">1000</span> * system_get_cpu_freq()) / <span class="number">1428</span>;  <span class="comment">// 0.70us (spec=0.70 +- 0.15)</span></div><div class="line">  ttot = (<span class="number">1000</span> * system_get_cpu_freq()) /  <span class="number">800</span>;  <span class="comment">// 1.25us (MUST be &gt;= 1.25)</span></div><div class="line"></div><div class="line">  t01h = t1h + t0h; <span class="comment">// Time to wait when having different bits</span></div><div class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line"></div><div class="line">    <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; ttot); <span class="comment">// Wait for the previous bit to finish</span></div><div class="line"></div><div class="line">    GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, pin_mask_ab); <span class="comment">// Set pin a and b high</span></div><div class="line"></div><div class="line">    start_time = c;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (pix_a &amp; mask) &#123;</div><div class="line">        <span class="keyword">if</span> (pix_b &amp; mask) &#123;</div><div class="line">            <span class="comment">// 11;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t1h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_ab);   <span class="comment">// Set pin a and b low</span></div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// 10;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t0h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_b);    <span class="comment">// Set pin_b low</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t01h); <span class="comment">// Wait remaining time</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_a);    <span class="comment">// Set pin_a low</span></div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">if</span> (pix_b &amp; mask) &#123;</div><div class="line">            <span class="comment">// 01;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t0h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_a);    <span class="comment">// Set pin_a low</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t01h); <span class="comment">// Wait remaining time</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_b);    <span class="comment">// Set pin_b low</span></div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// 00;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t0h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_ab);   <span class="comment">// Set pin a and b low</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (!(mask &gt;&gt;= <span class="number">1</span>)) &#123;</div><div class="line">      <span class="keyword">if</span> (p1 &gt;= end) &#123;</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      &#125;</div><div class="line">      pix_a  = *p1++;</div><div class="line">      pix_b  = *p2++;</div><div class="line">      mask = <span class="number">0x80</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>The ws2812 uses a single data pin. Data is sent by sending pulses with either a short or long duty cycle. A 0 is sent with a shorter high, a 1 is sent with a longer. The period must be at least 1.25us long.</p>
+<p>Looking at the signals with a scope shows that the timings are good enough.</p>
+<p><img src="/images/two_channels.png" alt="Two channels"></p>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/esp8266/"> #esp8266 </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/08/06/FreeMate/">FreeMate</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/06/28/Tinkering-with-the-ESP8266/">Tinkering with the ESP8266</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+
+    
+      <div class="comments" id="comments">
+        
+          <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </div>
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table Of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="https://avatars1.githubusercontent.com/u/3134352?v=3&s=460" alt="Konrad Beckmann" />
+          <p class="site-author-name">Konrad Beckmann</p>
+        </div>
+        <p class="site-description motion-element"></p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">categories</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">tags</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+              <a href="https://github.com/kbeckmann" target="_blank">GitHub</a>
+            </span>
+            
+              <span class="links-of-author-item">
+              <a href="https://twitter.com/kbeckmann" target="_blank">Twitter</a>
+            </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+        
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <p class="post-toc-empty">This post does not have a Table Of Contents</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp;  2015 - 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">Konrad Beckmann</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.3"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.3"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.3" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.3" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'happychips';
+      var disqus_identifier = '2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/';
+      var disqus_title = 'Bit-banging two pins simultaneously on ESP8266';
+      var disqus_url = 'https://kbeckmann.github.io/2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  <script type="text/javascript" src="/js/analytics_google-analytics.js?v=0.4.3"></script>
+
+
+</body>
+</html>

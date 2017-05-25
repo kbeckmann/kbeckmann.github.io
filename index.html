@@ -1,0 +1,1031 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+
+
+  <meta name="keywords" content="Hexo,next" />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Happychips" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: 'UA-64592242-1'
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Happychips </title>
+</head>
+
+<body>
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+  <div class="container one-column 
+   page-home 
+">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Happychips</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<div class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            <i class="menu-item-icon icon-home"></i> <br />
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            <i class="menu-item-icon icon-about"></i> <br />
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            Tags
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+  <div id="posts" class="posts-expand">
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2017/05/26/QEMU-instead-of-cross-compiling/">
+                Using QEMU instead of cross compiling for raspberry pi
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2017-05-26
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2017/05/26/QEMU-instead-of-cross-compiling/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/26/QEMU-instead-of-cross-compiling/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>I recently had to compile c++ code for the Raspberry pi and bumped into some issues because of the complexity of the code. There are at least four ways to build a binary:</p>
+<ol>
+<li>Compile the code on a Raspberry pi using a native compiler (a compiler that runs on arm and produces arm binaries)</li>
+<li>Cross-compile it on a powerful machine using a cross-compiled toolchain (runs on your normal x86_64 machine and produces arm binaries)</li>
+<li>Run a native arm compiler thorugh QEMU on a powerful x86_64 machine - <em>this is what we’re going to do</em></li>
+<li>Run a native arm compiler by emulating the whole Raspberry pi system including the kernel</li>
+</ol>
+<p>Compiling on the Raspberry pi itself works well if the code is small and doesn’t have a ton of heavy dependencies (e.g. boost). The problem one might run in to is that the resources of the poor Raspberry pi run out, i.e. the memory isn’t enough and/or it simply takes too long time to compile since the cpu is weak.</p>
+<p>Cross-compiling is the proper solution but it requires a bit of preparation and might take a lot of time to set up in case the toolchain has to be built (this is when a prebuilt toolchain is nice to have). You can read the <a href="https://hackaday.com/2016/02/03/code-craft-cross-compiling-for-the-raspberry-pi/" target="_blank" rel="external">Hackaday writeup on how this goes here</a>.</p>
+<p>Running the native arm compiler through QEMU maybe seems slow and weird but it could save some time. It did for me which is why I wrote this post.</p>
+<p>The fourth method should also be possible but I haven’t tried it and it seems complicated and even slower.</p>
+<h2 id="Getting-a-build-environment-up-and-running"><a href="#Getting-a-build-environment-up-and-running" class="headerlink" title="Getting a build environment up and running"></a>Getting a build environment up and running</h2><p>The following guide assumes you are running Archlinux with pacaur on an x86_64 machine and that you’ve got root. We will target the <code>ARMv6 Raspberry Pi</code>, i.e. <code>Raspberry pi</code>, <code>zero</code> and <code>zero w</code>. Use this guide with caution since we’re going to be playing with mounts that might harm your system.</p>
+<p><a href="https://archlinuxarm.org/about/downloads" target="_blank" rel="external">Download the latest Archlinux distribution for the Raspberry pi</a>.</p>
+<p>Extract the archive and cd into it: (If you don’t have <code>bsdtar</code>, install the <code>libarchive</code> package)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ mkdir -p arch-pi</div><div class="line">$ bsdtar -xpf ArchLinuxARM-rpi-latest.tar.gz -C arch-pi</div><div class="line">$ cd arch-pi</div></pre></td></tr></table></figure></p>
+<p>If you see error messages like <code>./var/db/: Failed to set file flags</code> it means that your file system doesn’t support the flags, but don’t worry about that. This might happen in case you’re running btrfs.</p>
+<p>Install <code>qemu-user-static</code> and <code>binfmt-support</code> from AUR:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pacaur -S qemu-user-static binfmt-support</div></pre></td></tr></table></figure></p>
+<p>Now we will enable the magic of binfmt-support. What it does is that it will make use of a kernel feature to use an interpreter when execuring ARM binaries and run it through QEMU instead. <a href="http://binfmt-support.nongnu.org/" target="_blank" rel="external">Read more here</a>.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo update-binfmts --enable</div><div class="line">$ update-binfmts --display</div></pre></td></tr></table></figure></p>
+<p>The second command will show you which ELF headers it that will be intercepted. Ensure that you can see <code>qemu-arm (enabled)</code> in the list.</p>
+<p>Copy <code>qemu-arm-static</code> to <code>./usr/bin/</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo cp $(which qemu-arm-static) ./usr/bin/</div></pre></td></tr></table></figure></p>
+<p>In order to be able to run <code>pacman</code> and other tools, we have to trick the environment into thinking that it’s running a full OS. We do this by mounting in some special paths. Note that this gives the emulated Archlinux environment control of your host machine. But since we’re only building code, this should be fine.<br><figure class="highlight tcl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Mount the /proc file system</span></div><div class="line">$ sudo mount -t <span class="keyword">proc</span><span class="title"> proc</span> <span class="keyword">proc</span></div><div class="line"></div><div class="line">#<span class="title"> Hack:</span> Replace ./etc/mtab<span class="title"> with</span> a<span class="title"> copy</span> of<span class="title"> your</span> mounts</div><div class="line">$<span class="title"> unlink</span> ./etc/mtab</div><div class="line">$<span class="title"> cat</span> /<span class="keyword">proc</span>/self/mounts &gt; ./etc/mtab</div><div class="line"></div><div class="line">#<span class="title"> Hack:</span> Hard<span class="title"> code</span> a<span class="title"> nameserver</span> in ./etc/resolv.conf<span class="title"> since</span> systemd<span class="title"> isn't</span> running</div><div class="line">$<span class="title"> unlink</span> ./etc/resolv.conf</div><div class="line">$<span class="title"> echo</span> "nameserver 8.8.8.8" &gt; ./etc/resolv.conf</div><div class="line"></div><div class="line">#<span class="title"> Sometimes</span> it's<span class="title"> nice</span> to<span class="title"> have</span> /dev/null.<span class="title"> If</span> needed,<span class="title"> mount</span> it<span class="title"> in:</span></div><div class="line">$<span class="title"> touch</span> ./dev/null &amp;&amp;<span class="title"> sudo</span> mount -o<span class="title"> bind</span> /dev/null ./dev/null</div></pre></td></tr></table></figure></p>
+<p>Chroot into the file system and start executing ARM binaries:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ sudo chroot . ./bin/bash</div><div class="line">[root@bacon ~]# uname -a</div><div class="line">Linux bacon 4.10.13-1-ARCH #1 SMP PREEMPT Thu Apr 27 12:15:09 CEST 2017 armv7l GNU/Linux</div></pre></td></tr></table></figure></p>
+<p>Notice <code>armv7l</code>, it means we’re running commands through QEMU.</p>
+<p>Now it’s time to install the tools you need to build your code. In my case I needed <code>base-devel</code> and <code>cmake</code>. <code>%</code> illustrates that we’re in the chroot environment.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># Update, then install the packages</div><div class="line">% pacman -Syyu</div><div class="line">% pacman -S base-devel cmake</div></pre></td></tr></table></figure></p>
+<p>The environment should be ready to build your code now. Don’t forget to use all of your cores when building.</p>
+<h2 id="Problems"><a href="#Problems" class="headerlink" title="Problems"></a>Problems</h2><p>Some tools might expect /dev/fd/ to be set up properly. This can be solved with an epic hack.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># Run this inside the chroot</div><div class="line">% ln -s /proc/self/fd /dev/fd</div></pre></td></tr></table></figure></p>
+<p>I had some problems accessing https resources, not sure why. If someone has a clue please let me know (I just get <code>curl: (35) SSL connect error</code> and similar errors.)</p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2017/05/06/Headless-raspberry-pi-for-real/">
+                Headless raspberry pi (for reals)
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2017-05-06
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2017/05/06/Headless-raspberry-pi-for-real/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/06/Headless-raspberry-pi-for-real/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>If you want to install and interact with a raspberry pi using only a USB cable and nothing else (no UART hardware, no physical keybord, hdmi-screen, wifi, network cable etc), this guide is for you. We will set up wifi and enable ssh while we’re at it just because we can.</p>
+<p>We are going to:</p>
+<ul>
+<li>Download and install the latest raspbian-jessie-lite on an SD-card</li>
+<li>Configure the pi to act as a USB serial device</li>
+<li>Configure wpa_supplicant with your wifi AP’s credentials</li>
+<li>Create symlinks to enable systemd services on boot (wpa_supplicant, ttyGS0 and ssh)</li>
+</ul>
+<p>This guide has only been tested on a <strong>Raspberry Pi Zero W</strong>, but should work fine on other Pis.</p>
+<p>Download and transfer raspbian-jessie-light to an sdcard (assuming /dev/mmcblk0 here)<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> wget https://downloads.raspberrypi.org/raspbian_lite_latest</span></div><div class="line"><span class="meta">$</span><span class="bash"> unzip raspbian_lite_latest</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo dd <span class="keyword">if</span>=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0 status=progress bs=1M</span></div><div class="line"><span class="meta">$</span><span class="bash"> sync</span></div></pre></td></tr></table></figure></p>
+<p>Mount the boot partition<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> mkdir boot</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo mount /dev/mmcblk0p1 boot</span></div></pre></td></tr></table></figure></p>
+<p>Add the following line in the end of <code>boot/config.txt</code> to enable the DWC2 USB driver (this enables USB gadgets):<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">dtoverlay</span>=dwc2</div></pre></td></tr></table></figure></p>
+<p>Add <code>modules-load=dwc2,g_serial</code> after <code>rootwait</code> in <code>boot/cmdline.txt</code><br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Your cmdline.txt should look something like this (but might differ and that's fine)</span></div><div class="line">dwc_otg.<span class="attr">lpm_enable=0</span> <span class="attr">console=serial0,115200</span> <span class="attr">console=tty1</span> <span class="attr">root=/dev/mmcblk0p2</span> <span class="attr">rootfstype=ext4</span> <span class="attr">elevator=deadline</span> fsck.<span class="attr">repair=yes</span> rootwait <span class="attr">modules-load=dwc2,g_serial</span> quiet <span class="attr">init=/usr/lib/raspi-config/init_resize.sh</span></div></pre></td></tr></table></figure></p>
+<p>Let’s configure the root filesystem.<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> Mount the root partition</span></div><div class="line"><span class="meta">$</span><span class="bash"> mkdir root</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo mount /dev/mmcblk0p2 root</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> root</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Configure your wifi credentials by editing /etc/wpa_supplicant/wpa_supplicant.conf</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo vim etc/wpa_supplicant/wpa_supplicant.conf</span></div><div class="line"></div><div class="line">ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev</div><div class="line">update_config=1</div><div class="line">network=&#123;</div><div class="line">    ssid="Your SSID"</div><div class="line">    psk="Password"</div><div class="line">&#125;</div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Save and <span class="built_in">exit</span></span></div><div class="line"><span class="meta"></span></div><div class="line"></div><div class="line">#<span class="bash"> Fake systemctl <span class="built_in">enable</span> wpa_supplicant.service</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ./etc/systemd/system/multi-user.target.wants</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo ln <span class="_">-s</span> ../../../../lib/systemd/system/wpa_supplicant.service</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Fake systemctl <span class="built_in">enable</span> ssh.service</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo ln <span class="_">-s</span> ../../../../lib/systemd/system/ssh.service</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Fake systemctl <span class="built_in">enable</span> getty@ttyGS0.service</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ../getty.target.wants</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo ln <span class="_">-s</span> /lib/systemd/system/getty@.service getty@ttyGS0.service</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Done! Sync and unmount</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ../../../../..; sync; sudo umount boot root</span></div></pre></td></tr></table></figure></p>
+<p>Remove the sd-card and insert it in your Pi, connect a USB cable in the “USB Data port”, then connect it to your computer. Run <code>journalctl -f</code> on your host machine to see what happens then the Pi boots. After a while, you will probably end up seeing<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">May</span> 06 21<span class="selector-pseudo">:04</span><span class="selector-pseudo">:54</span> <span class="selector-tag">bacon</span> <span class="selector-tag">kernel</span>: <span class="selector-tag">cdc_acm</span> 1<span class="selector-tag">-2</span><span class="selector-pseudo">:2.0</span>: <span class="selector-tag">ttyACM0</span>: <span class="selector-tag">USB</span> <span class="selector-tag">ACM</span> <span class="selector-tag">device</span></div></pre></td></tr></table></figure></p>
+<p>Go ahead now and connect to the device using <code>screen /dev/ttyACM0 115200</code> and interact with your raspi. In case you’ve never used <code>screen</code> before: exit using <code>&lt;Ctrl&gt;-a d</code>.</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">pi<span class="variable">@raspberrypi</span><span class="symbol">:~</span><span class="variable">$ </span>uname -a</div><div class="line">Linux raspberrypi <span class="number">4.4</span>.<span class="number">50</span>+ <span class="comment">#970 Mon Feb 20 19:12:50 GMT 2017 armv6l GNU/Linux</span></div></pre></td></tr></table></figure>
+<h3 id="Alternative-solution-using-qemu-arm-static-not-recommended"><a href="#Alternative-solution-using-qemu-arm-static-not-recommended" class="headerlink" title="Alternative solution using qemu-arm-static (not recommended)"></a>Alternative solution using qemu-arm-static (not recommended)</h3><p>While writing this guide I used <code>qemu-arm-static</code> in order to enable the systemd services. This turned out to be really messy (segfault in strange places etc). If you want to try this approach, feel free to change the symlink steps above to the following:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> Install qemu-user-static. On archlinux with AUR:</span></div><div class="line"><span class="meta">$</span><span class="bash"> pacaur -S qemu-user-static</span></div><div class="line"><span class="meta">#</span><span class="bash"> Ubuntu:</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo apt-get install qemu-user-static</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Copy qemu-arm-static to the root filesystem</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo cp $(<span class="built_in">which</span> qemu-arm-static) ./usr/bin/</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Enter the pi<span class="string">'s root filesystem by running the local bash(dash) using `qemu-arm-static`</span></span></div><div class="line"><span class="meta">$</span><span class="bash"><span class="string"> sudo chroot . ./usr/bin/qemu-arm-static /bin/bash</span></span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="string"> We are now in the mounted root filesystem.</span></span></div><div class="line"><span class="meta">#</span><span class="bash"><span class="string"> Enable wpa_supplicant so that it runs on boot</span></span></div><div class="line"><span class="meta">%</span><span class="bash"><span class="string"> qemu-arm-static /bin/systemctl enable wpa_supplicant.service</span></span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="string"> Enable the USB TTY service</span></span></div><div class="line"><span class="meta">%</span><span class="bash"><span class="string"> qemu-arm-static /bin/systemctl enable getty@ttyGS0.service</span></span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="string"> Enable SSH (this might result in a segfault...)</span></span></div><div class="line"><span class="meta">%</span><span class="bash"><span class="string"> qemu-arm-static /bin/systemctl enable ssh.service</span></span></div></pre></td></tr></table></figure>
+<h3 id="More-reading"><a href="#More-reading" class="headerlink" title="More reading"></a>More reading</h3><p><a href="https://learn.adafruit.com/turning-your-raspberry-pi-zero-into-a-usb-gadget?view=all" target="_blank" rel="external">Adafruit’s article on how to enable the USB gadgets</a><br><a href="https://cateee.net/lkddb/web-lkddb/USB_DWC2.html" target="_blank" rel="external">CONFIG_USB_DWC2: DesignWare USB2 DRD Core Support</a><br><a href="http://www.linux-usb.org/gadget/" target="_blank" rel="external">Linux-USB Gadget API Framework</a></p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2016/11/25/ham.js/">
+                Morse generator without clicks
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2016-11-25
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2016/11/25/ham.js/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/25/ham.js/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>I just made a lousy morse signal generator in javascript. The idea is to develop this further and implement BPSK31 and other things, but morse is a start.</p>
+<p><a href="https://git.xil.se/kbeckmann/ham.js" target="_blank" rel="external">Code can be found here</a>, and a <a href="/ham.js/">demo is here</a>.</p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2016/06/19/NFC-Antenna-Generator/">
+                NFC Antenna Generator
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2016-06-19
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2016/06/19/NFC-Antenna-Generator/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/19/NFC-Antenna-Generator/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>I am currently designing a board with a PCB trace NFC-antenna and spent some time trying to figure out a good shape of the antenna.</p>
+<p>ST has a nice tool in their <a href="http://www.st.com/content/st_com/en/products/memories/nfc-rfid-memories-and-transceivers/dynamic-nfc-rfid-tags.html?querycriteria=productId=SC1412" target="_blank" rel="external">eDesignSuite</a> to calculate the inductance based on the size and number of turns. But if you end up with a lot of turns it can be quite boring to draw the antenna yourself, so I made a tool for it. Could have done it in any language but ended up using javascript since it can be used directly in the browser.</p>
+<p>Behold, the <a href="/nfc-antenna-generator/">NFC Antenna Generator</a>. It generates a footprint in any resolution that can easily be imported in KiCad or similar. Enjoy!</p>
+<p><img src="/nfc-antenna-generator/sample.png" alt="Sample antenna"></p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/08/06/FreeMate/">
+                FreeMate
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2015-08-06
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; In
+            
+              <a href="/categories/misc/">misc</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/08/06/FreeMate/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/08/06/FreeMate/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>Club Mate is an awesome beverage. Here’s how to do it yourself.</p>
+<h1 id="HOWTO-FreeMate"><a href="#HOWTO-FreeMate" class="headerlink" title="HOWTO FreeMate"></a>HOWTO FreeMate</h1><h3 id="DEPENDENCIES"><a href="#DEPENDENCIES" class="headerlink" title="DEPENDENCIES"></a>DEPENDENCIES</h3><ul>
+<li>Yerba Mate Tea</li>
+<li>Sugar, preferrably dissolved in water</li>
+<li>Lemon Juice</li>
+<li>Carbonated Water</li>
+</ul>
+<h3 id="BUILDING"><a href="#BUILDING" class="headerlink" title="BUILDING"></a>BUILDING</h3><p>SuperStrong Mate Tea (1 liter):</p>
+<ul>
+<li>Boil 1 liter water.</li>
+<li>Add 5 tablespoons of Yerba Mate Tea.</li>
+<li>Let it sit for at least 7 minutes.</li>
+<li>Filter it through a coffee filter. This makes it less cloudy.</li>
+<li>Let it cool down and finally put it in the fridge.</li>
+</ul>
+<p>Dissolved sugar in water:</p>
+<ul>
+<li>Boil a small amount of water (e.g. 2dl)</li>
+<li>Add sugar until the solution becomes a little bit thicker than water.</li>
+<li>Don’t add too much sugar, then it will not be easy to use later.</li>
+</ul>
+<h3 id="INSTALLING"><a href="#INSTALLING" class="headerlink" title="INSTALLING"></a>INSTALLING</h3><ul>
+<li>For each serving of FreeMate:<ul>
+<li>20% SuperStrong Mate Tea</li>
+<li>Add as much sugar as required by your system, but don’t take too much</li>
+<li>Add a few dashes of Lemon Juice</li>
+<li>Mix it well</li>
+<li>Add Carbonated Water</li>
+<li>Mix carefully</li>
+<li>Ready for consumption</li>
+</ul>
+</li>
+</ul>
+<h3 id="TESTING"><a href="#TESTING" class="headerlink" title="TESTING"></a>TESTING</h3><ul>
+<li>Every now and then, compare your FreeMate installation with a Club Mate. This will let you realize what a fantastic beverage you have created.</li>
+</ul>
+<h3 id="COPYING"><a href="#COPYING" class="headerlink" title="COPYING"></a>COPYING</h3><p>“THE BEER/MATE-WARE LICENSE”:<br><a href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#x3a;&#107;&#x6f;&#x6e;&#114;&#97;&#x64;&#64;&#x78;&#105;&#x6c;&#x2e;&#115;&#x65;">&#107;&#x6f;&#x6e;&#114;&#97;&#x64;&#64;&#x78;&#105;&#x6c;&#x2e;&#115;&#x65;</a> wrote this file. As long as you retain this notice you<br>can do whatever you want with this stuff. If we meet some day, and you think<br>this stuff is worth it, you can buy us a ( &gt; 0 ) beer/mate in return - Konrad Beckmann</p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/">
+                Bit-banging two pins simultaneously on ESP8266
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2015-07-25
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; In
+            
+              <a href="/categories/hardware/">hardware</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>I’m currently building an 8 x 144 LED panel using ws2812 LED-strips. That results in 27648 bits per frame. With an optimal driver it takes a constant time of 34.56ms per frame (27648 bits * 1.25us per bit). Even if I spend every single clock cycle pushing pixels, I can only reach 29 fps. But I want to do other stuff with my ESP8266 as well.</p>
+<p>A solution to get higher frame rate is to simply reduce the number of LEDs to control via the same data pin and use multiple pins instead. The tricky part is to get the timing right.</p>
+<p>Since the ESP8266 is quite fast it is possible to use two pins and get the timing right.</p>
+<p>Here’s the code that I came up with and it works pretty well. I get my high framerate and it’s really smooth. <a href="https://github.com/kbeckmann/nodemcu-firmware/blob/ws2812-dual/app/modules/ws2812.c#L135" target="_blank" rel="external">Full code here</a>.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">void</span> ICACHE_RAM_ATTR __attribute__((optimize(<span class="string">"O2"</span>))) ws2812_writedual(</div><div class="line">    <span class="keyword">uint8_t</span> pin_a, <span class="keyword">uint8_t</span> pin_b, <span class="keyword">uint8_t</span> *pixels, <span class="keyword">uint32_t</span> num_bytes) &#123;</div><div class="line">  <span class="keyword">uint8_t</span> *p1, *p2, *end, pix_a, pix_b, mask;</div><div class="line">  <span class="keyword">uint32_t</span> t, t0h, t1h, t01h, ttot, c, start_time;</div><div class="line">  <span class="keyword">uint32_t</span> pin_mask_a, pin_mask_b, pin_mask_ab, bits;</div><div class="line"></div><div class="line">  pin_mask_a = <span class="number">1</span> &lt;&lt; pin_a;</div><div class="line">  pin_mask_b = <span class="number">1</span> &lt;&lt; pin_b;</div><div class="line">  pin_mask_ab = pin_mask_a | pin_mask_b;</div><div class="line">  p1 = pixels;</div><div class="line">  p2 = pixels + num_bytes / <span class="number">2</span>;</div><div class="line">  end = p1 + num_bytes / <span class="number">2</span>;</div><div class="line">  pix_a = *p1++;</div><div class="line">  pix_b = *p2++;</div><div class="line">  mask = <span class="number">0x80</span>;</div><div class="line">  start_time = _getCycleCount();</div><div class="line">  t0h  = (<span class="number">1000</span> * system_get_cpu_freq()) / <span class="number">2857</span>;  <span class="comment">// 0.35us (spec=0.35 +- 0.15)</span></div><div class="line">  t1h  = (<span class="number">1000</span> * system_get_cpu_freq()) / <span class="number">1428</span>;  <span class="comment">// 0.70us (spec=0.70 +- 0.15)</span></div><div class="line">  ttot = (<span class="number">1000</span> * system_get_cpu_freq()) /  <span class="number">800</span>;  <span class="comment">// 1.25us (MUST be &gt;= 1.25)</span></div><div class="line"></div><div class="line">  t01h = t1h + t0h; <span class="comment">// Time to wait when having different bits</span></div><div class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line"></div><div class="line">    <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; ttot); <span class="comment">// Wait for the previous bit to finish</span></div><div class="line"></div><div class="line">    GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, pin_mask_ab); <span class="comment">// Set pin a and b high</span></div><div class="line"></div><div class="line">    start_time = c;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (pix_a &amp; mask) &#123;</div><div class="line">        <span class="keyword">if</span> (pix_b &amp; mask) &#123;</div><div class="line">            <span class="comment">// 11;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t1h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_ab);   <span class="comment">// Set pin a and b low</span></div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// 10;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t0h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_b);    <span class="comment">// Set pin_b low</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t01h); <span class="comment">// Wait remaining time</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_a);    <span class="comment">// Set pin_a low</span></div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">if</span> (pix_b &amp; mask) &#123;</div><div class="line">            <span class="comment">// 01;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t0h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_a);    <span class="comment">// Set pin_a low</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t01h); <span class="comment">// Wait remaining time</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_b);    <span class="comment">// Set pin_b low</span></div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// 00;</span></div><div class="line">            <span class="keyword">while</span> (((c = _getCycleCount()) - start_time) &lt; t0h);  <span class="comment">// Wait high duration</span></div><div class="line">            GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, pin_mask_ab);   <span class="comment">// Set pin a and b low</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (!(mask &gt;&gt;= <span class="number">1</span>)) &#123;</div><div class="line">      <span class="keyword">if</span> (p1 &gt;= end) &#123;</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      &#125;</div><div class="line">      pix_a  = *p1++;</div><div class="line">      pix_b  = *p2++;</div><div class="line">      mask = <span class="number">0x80</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>The ws2812 uses a single data pin. Data is sent by sending pulses with either a short or long duty cycle. A 0 is sent with a shorter high, a 1 is sent with a longer. The period must be at least 1.25us long.</p>
+<p>Looking at the signals with a scope shows that the timings are good enough.</p>
+<p><img src="/images/two_channels.png" alt="Two channels"></p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/06/28/Tinkering-with-the-ESP8266/">
+                Tinkering with the ESP8266
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2015-06-28
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; In
+            
+              <a href="/categories/hardware/">hardware</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/06/28/Tinkering-with-the-ESP8266/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/28/Tinkering-with-the-ESP8266/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <h1 id="Tinkering-with-the-ESP8266"><a href="#Tinkering-with-the-ESP8266" class="headerlink" title="Tinkering with the ESP8266"></a>Tinkering with the ESP8266</h1><p>A <a href="http://memset.io/" target="_blank" rel="external">friend</a> of mine showed me the ESP8266 and I just had to play with it. It’s sold as a serial-to-wifi module to Arduino but the firmware can be changed to do more. It’s also really cheap, about $2.20 from Aliexpress.</p>
+<p>We flashed <a href="https://github.com/nodemcu/nodemcu-firmware.git" target="_blank" rel="external">NodeMCU</a> onto it and wrote some Lua code to connect to a wifi-AP and access a webpage. And it worked, most of the times at least. The stability and reliability isn’t really 100% currently, but hopefully it will be improved over time.</p>
+<h1 id="Connecting-it"><a href="#Connecting-it" class="headerlink" title="Connecting it"></a>Connecting it</h1><p>I haven’t got all the tools and power supplies yet so we had to do dirty hacks to get it to work. In order to use the chip, 3.3V and ground need to be connected to two pins each. A proper power supply and a bredboard would’ve done things easier but there’s always a way if you don’t have it.</p>
+<p>We found a dusty Raspberry Pi B and just used its 3.3 volt and ground pins. Good for us that there are multiple connectors.</p>
+<p>In order to use the chip, the following pins need to be connected:</p>
+<pre><code>+3.3V  =&gt; VCC
++3.3V  =&gt; CH_PD
+GND    =&gt; GND
+GND    =&gt; GPIO0 When flashing the firmware
+</code></pre><p>A USB-to-serial is also needed. Make sure that it uses 3.3V. I used a PL2303HX, it’s pretty cheap. Connect it:</p>
+<pre><code>GND =&gt; GND
+RX  =&gt; TX
+TX  =&gt; RX
++5V =&gt; don&apos;t connect this :)
+</code></pre><h1 id="Code-to-access-the-web"><a href="#Code-to-access-the-web" class="headerlink" title="Code to access the web"></a>Code to access the web</h1><p>After flashing NodeMCU, it’s time for some Lua scripting. It’s possible to just connect to the serial interface and just write code, but it gets really frustrating when your code grows, obviously. </p>
+<p>There’s an IDE called <a href="https://github.com/4refr0nt/ESPlorer" target="_blank" rel="external">esplorer</a> that helps you out. It’s pretty basic and written in java, but it gets the job done. There’s also an <a href="https://aur.archlinux.org/packages/esplorer/" target="_blank" rel="external">AUR package</a> for it so you can install it quickly if you run Arch.</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- Connect to a wifi-ap</span></div><div class="line">wifi.setmode(wifi.STATION)</div><div class="line">wifi.sta.<span class="built_in">config</span>(<span class="string">"your-ssid"</span>, <span class="string">"password"</span>)</div><div class="line"></div><div class="line"><span class="comment">-- Set a timer with 500ms delay and check if we've got an IP-address</span></div><div class="line">tmr.alarm(<span class="number">0</span>, <span class="number">500</span>, <span class="number">1</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">if</span> wifi.sta.getip() == <span class="literal">nil</span> <span class="keyword">then</span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"No ip yet"</span>)</div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"Got ip: "</span> .. wifi.sta.getip())</div><div class="line">        tmr.stop(<span class="number">0</span>)</div><div class="line">        reg_gpio()</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span>)</div><div class="line"></div><div class="line"><span class="comment">-- Register an interrupt on GPIO pin 3 (it's called GPIO0 on the board)</span></div><div class="line"><span class="comment">-- "both" is used because it seems to work better than simply "up". </span></div><div class="line"><span class="comment">-- This means that the callback is called whenever the pin goes high or low.</span></div><div class="line"><span class="comment">-- Not sure if it's because of a bug in the firmware or I just had bad luck</span></div><div class="line"><span class="comment">-- when testing.</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">reg_gpio</span><span class="params">()</span></span></div><div class="line">gpio.mode(<span class="number">3</span>, gpio.INT)</div><div class="line">gpio.trig(<span class="number">3</span>, <span class="string">"both"</span>, <span class="function"><span class="keyword">function</span><span class="params">(level)</span></span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"both: 3  "</span> .. level)</div><div class="line">        <span class="keyword">if</span> level == <span class="number">1</span> <span class="keyword">then</span></div><div class="line">            http_get(<span class="string">"192.168.0.1"</span>, <span class="number">80</span>, <span class="string">"192.168.0.1"</span>, <span class="string">"/"</span>)</div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span>)</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment">-- A simple HTTP GET call. Not optimal but works.</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">http_get</span><span class="params">(host_addr, port, hostname, path)</span></span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"http_get()"</span>)</div><div class="line">    sk=net.createConnection(net.TCP, <span class="number">0</span>)</div><div class="line">    sk:on(<span class="string">"receive"</span>, <span class="function"><span class="keyword">function</span><span class="params">(sck, c)</span></span> <span class="built_in">print</span>(c) <span class="keyword">end</span> )</div><div class="line">    sk:connect(port, host_addr)</div><div class="line">    request = <span class="string">"GET "</span> .. <span class="built_in">path</span> .. <span class="string">" HTTP/1.1\r\n"</span> ..</div><div class="line">    <span class="string">"Host: "</span> .. hostname .. <span class="string">"\r\n"</span> ..</div><div class="line">    <span class="string">"Connection: close\r\nAccept: */*\r\n\r\n"</span></div><div class="line">    <span class="built_in">print</span>(request)</div><div class="line">    sk:send(request)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>My code works most of the time but not always. It’s probably because the firmware is still a bit buggy, but hopefully it will improve.</p>
+<h1 id="Pinout-reference"><a href="#Pinout-reference" class="headerlink" title="Pinout reference"></a>Pinout reference</h1><p>Here are the pinout configurations for reference.</p>
+<p>ESP8266</p>
+<p><img src="/images/Tinkering-with-the-ESP8266_wifi.jpg" alt="Pinout configuration of ESP8266"></p>
+<p>Raspberry PI B+. A and B only have 26 pins, they are the same. <small><small><a href="http://www.element14.com/community/community/raspberry-pi/raspberry-pi-bplus/blog/2014/12/05/minecraft-on-the-raspberry-pi-model-a" target="_blank" rel="external">Source</a></small></small></p>
+<p><img src="/images/Tinkering-with-the-ESP8266_raspi.png" alt="Pinout configuration of ESP8266"></p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/06/28/Hello-hexo-io/">
+                Hello hexo.io
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2015-06-28
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; In
+            
+              <a href="/categories/misc/">misc</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/06/28/Hello-hexo-io/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/28/Hello-hexo-io/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>It was finally time to setup a blog and I wanted something statically generated. <a href="http://hexo.io" target="_blank" rel="external">hexo.io</a> seemed nice so that’s what I’m using. Found a nice <a href="http://jr0cket.co.uk/hexo/" target="_blank" rel="external">installation guide</a> so setting everything up went pretty fast. Really like it so far.</p>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+  </div>
+
+  
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="https://avatars1.githubusercontent.com/u/3134352?v=3&s=460" alt="Konrad Beckmann" />
+          <p class="site-author-name">Konrad Beckmann</p>
+        </div>
+        <p class="site-description motion-element"></p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">categories</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">tags</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+              <a href="https://github.com/kbeckmann" target="_blank">GitHub</a>
+            </span>
+            
+              <span class="links-of-author-item">
+              <a href="https://twitter.com/kbeckmann" target="_blank">Twitter</a>
+            </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+        
+      </div>
+
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp;  2015 - 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">Konrad Beckmann</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.3"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.3"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.3" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+  
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'happychips';
+      var disqus_identifier = 'index.html';
+      var disqus_title = '';
+      var disqus_url = '';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  <script type="text/javascript" src="/js/analytics_google-analytics.js?v=0.4.3"></script>
+
+
+</body>
+</html>

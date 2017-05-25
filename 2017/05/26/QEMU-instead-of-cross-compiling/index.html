@@ -1,0 +1,630 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+
+
+  <meta name="keywords" content="raspi,raspberry pi,compiling,qemu,qemu-static,arm," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Happychips" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: 'UA-64592242-1'
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Using QEMU instead of cross compiling for raspberry pi // Happychips </title>
+</head>
+
+<body>
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Happychips</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<div class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            <i class="menu-item-icon icon-home"></i> <br />
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            <i class="menu-item-icon icon-about"></i> <br />
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            Tags
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              Using QEMU instead of cross compiling for raspberry pi
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2017-05-26
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2017/05/26/QEMU-instead-of-cross-compiling/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/26/QEMU-instead-of-cross-compiling/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p>I recently had to compile c++ code for the Raspberry pi and bumped into some issues because of the complexity of the code. There are at least four ways to build a binary:</p>
+<ol>
+<li>Compile the code on a Raspberry pi using a native compiler (a compiler that runs on arm and produces arm binaries)</li>
+<li>Cross-compile it on a powerful machine using a cross-compiled toolchain (runs on your normal x86_64 machine and produces arm binaries)</li>
+<li>Run a native arm compiler thorugh QEMU on a powerful x86_64 machine - <em>this is what we’re going to do</em></li>
+<li>Run a native arm compiler by emulating the whole Raspberry pi system including the kernel</li>
+</ol>
+<p>Compiling on the Raspberry pi itself works well if the code is small and doesn’t have a ton of heavy dependencies (e.g. boost). The problem one might run in to is that the resources of the poor Raspberry pi run out, i.e. the memory isn’t enough and/or it simply takes too long time to compile since the cpu is weak.</p>
+<p>Cross-compiling is the proper solution but it requires a bit of preparation and might take a lot of time to set up in case the toolchain has to be built (this is when a prebuilt toolchain is nice to have). You can read the <a href="https://hackaday.com/2016/02/03/code-craft-cross-compiling-for-the-raspberry-pi/" target="_blank" rel="external">Hackaday writeup on how this goes here</a>.</p>
+<p>Running the native arm compiler through QEMU maybe seems slow and weird but it could save some time. It did for me which is why I wrote this post.</p>
+<p>The fourth method should also be possible but I haven’t tried it and it seems complicated and even slower.</p>
+<h2 id="Getting-a-build-environment-up-and-running"><a href="#Getting-a-build-environment-up-and-running" class="headerlink" title="Getting a build environment up and running"></a>Getting a build environment up and running</h2><p>The following guide assumes you are running Archlinux with pacaur on an x86_64 machine and that you’ve got root. We will target the <code>ARMv6 Raspberry Pi</code>, i.e. <code>Raspberry pi</code>, <code>zero</code> and <code>zero w</code>. Use this guide with caution since we’re going to be playing with mounts that might harm your system.</p>
+<p><a href="https://archlinuxarm.org/about/downloads" target="_blank" rel="external">Download the latest Archlinux distribution for the Raspberry pi</a>.</p>
+<p>Extract the archive and cd into it: (If you don’t have <code>bsdtar</code>, install the <code>libarchive</code> package)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ mkdir -p arch-pi</div><div class="line">$ bsdtar -xpf ArchLinuxARM-rpi-latest.tar.gz -C arch-pi</div><div class="line">$ cd arch-pi</div></pre></td></tr></table></figure></p>
+<p>If you see error messages like <code>./var/db/: Failed to set file flags</code> it means that your file system doesn’t support the flags, but don’t worry about that. This might happen in case you’re running btrfs.</p>
+<p>Install <code>qemu-user-static</code> and <code>binfmt-support</code> from AUR:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pacaur -S qemu-user-static binfmt-support</div></pre></td></tr></table></figure></p>
+<p>Now we will enable the magic of binfmt-support. What it does is that it will make use of a kernel feature to use an interpreter when execuring ARM binaries and run it through QEMU instead. <a href="http://binfmt-support.nongnu.org/" target="_blank" rel="external">Read more here</a>.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo update-binfmts --enable</div><div class="line">$ update-binfmts --display</div></pre></td></tr></table></figure></p>
+<p>The second command will show you which ELF headers it that will be intercepted. Ensure that you can see <code>qemu-arm (enabled)</code> in the list.</p>
+<p>Copy <code>qemu-arm-static</code> to <code>./usr/bin/</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo cp $(which qemu-arm-static) ./usr/bin/</div></pre></td></tr></table></figure></p>
+<p>In order to be able to run <code>pacman</code> and other tools, we have to trick the environment into thinking that it’s running a full OS. We do this by mounting in some special paths. Note that this gives the emulated Archlinux environment control of your host machine. But since we’re only building code, this should be fine.<br><figure class="highlight tcl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Mount the /proc file system</span></div><div class="line">$ sudo mount -t <span class="keyword">proc</span><span class="title"> proc</span> <span class="keyword">proc</span></div><div class="line"></div><div class="line">#<span class="title"> Hack:</span> Replace ./etc/mtab<span class="title"> with</span> a<span class="title"> copy</span> of<span class="title"> your</span> mounts</div><div class="line">$<span class="title"> unlink</span> ./etc/mtab</div><div class="line">$<span class="title"> cat</span> /<span class="keyword">proc</span>/self/mounts &gt; ./etc/mtab</div><div class="line"></div><div class="line">#<span class="title"> Hack:</span> Hard<span class="title"> code</span> a<span class="title"> nameserver</span> in ./etc/resolv.conf<span class="title"> since</span> systemd<span class="title"> isn't</span> running</div><div class="line">$<span class="title"> unlink</span> ./etc/resolv.conf</div><div class="line">$<span class="title"> echo</span> "nameserver 8.8.8.8" &gt; ./etc/resolv.conf</div><div class="line"></div><div class="line">#<span class="title"> Sometimes</span> it's<span class="title"> nice</span> to<span class="title"> have</span> /dev/null.<span class="title"> If</span> needed,<span class="title"> mount</span> it<span class="title"> in:</span></div><div class="line">$<span class="title"> touch</span> ./dev/null &amp;&amp;<span class="title"> sudo</span> mount -o<span class="title"> bind</span> /dev/null ./dev/null</div></pre></td></tr></table></figure></p>
+<p>Chroot into the file system and start executing ARM binaries:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ sudo chroot . ./bin/bash</div><div class="line">[root@bacon ~]# uname -a</div><div class="line">Linux bacon 4.10.13-1-ARCH #1 SMP PREEMPT Thu Apr 27 12:15:09 CEST 2017 armv7l GNU/Linux</div></pre></td></tr></table></figure></p>
+<p>Notice <code>armv7l</code>, it means we’re running commands through QEMU.</p>
+<p>Now it’s time to install the tools you need to build your code. In my case I needed <code>base-devel</code> and <code>cmake</code>. <code>%</code> illustrates that we’re in the chroot environment.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># Update, then install the packages</div><div class="line">% pacman -Syyu</div><div class="line">% pacman -S base-devel cmake</div></pre></td></tr></table></figure></p>
+<p>The environment should be ready to build your code now. Don’t forget to use all of your cores when building.</p>
+<h2 id="Problems"><a href="#Problems" class="headerlink" title="Problems"></a>Problems</h2><p>Some tools might expect /dev/fd/ to be set up properly. This can be solved with an epic hack.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># Run this inside the chroot</div><div class="line">% ln -s /proc/self/fd /dev/fd</div></pre></td></tr></table></figure></p>
+<p>I had some problems accessing https resources, not sure why. If someone has a clue please let me know (I just get <code>curl: (35) SSL connect error</code> and similar errors.)</p>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/raspi/"> #raspi </a>
+          
+            <a href="/tags/raspberry-pi/"> #raspberry pi </a>
+          
+            <a href="/tags/compiling/"> #compiling </a>
+          
+            <a href="/tags/qemu/"> #qemu </a>
+          
+            <a href="/tags/qemu-static/"> #qemu-static </a>
+          
+            <a href="/tags/arm/"> #arm </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/06/Headless-raspberry-pi-for-real/">Headless raspberry pi (for reals)</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+
+    
+      <div class="comments" id="comments">
+        
+          <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </div>
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table Of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="https://avatars1.githubusercontent.com/u/3134352?v=3&s=460" alt="Konrad Beckmann" />
+          <p class="site-author-name">Konrad Beckmann</p>
+        </div>
+        <p class="site-description motion-element"></p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">categories</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">tags</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+              <a href="https://github.com/kbeckmann" target="_blank">GitHub</a>
+            </span>
+            
+              <span class="links-of-author-item">
+              <a href="https://twitter.com/kbeckmann" target="_blank">Twitter</a>
+            </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+        
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Getting-a-build-environment-up-and-running"><span class="nav-number">1.</span> <span class="nav-text">Getting a build environment up and running</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Problems"><span class="nav-number">2.</span> <span class="nav-text">Problems</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp;  2015 - 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">Konrad Beckmann</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.3"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.3"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.3" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.3" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'happychips';
+      var disqus_identifier = '2017/05/26/QEMU-instead-of-cross-compiling/';
+      var disqus_title = 'Using QEMU instead of cross compiling for raspberry pi';
+      var disqus_url = 'https://kbeckmann.github.io/2017/05/26/QEMU-instead-of-cross-compiling/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  <script type="text/javascript" src="/js/analytics_google-analytics.js?v=0.4.3"></script>
+
+
+</body>
+</html>

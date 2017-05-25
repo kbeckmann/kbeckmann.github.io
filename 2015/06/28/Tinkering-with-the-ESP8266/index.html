@@ -1,0 +1,632 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+
+
+  <meta name="keywords" content="esp8266,raspberry pi," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Happychips" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: 'UA-64592242-1'
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Tinkering with the ESP8266 // Happychips </title>
+</head>
+
+<body>
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Happychips</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<div class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            <i class="menu-item-icon icon-home"></i> <br />
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            <i class="menu-item-icon icon-about"></i> <br />
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            Tags
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              Tinkering with the ESP8266
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2015-06-28
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; In
+            
+              <a href="/categories/hardware/">hardware</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/06/28/Tinkering-with-the-ESP8266/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/28/Tinkering-with-the-ESP8266/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <h1 id="Tinkering-with-the-ESP8266"><a href="#Tinkering-with-the-ESP8266" class="headerlink" title="Tinkering with the ESP8266"></a>Tinkering with the ESP8266</h1><p>A <a href="http://memset.io/" target="_blank" rel="external">friend</a> of mine showed me the ESP8266 and I just had to play with it. It’s sold as a serial-to-wifi module to Arduino but the firmware can be changed to do more. It’s also really cheap, about $2.20 from Aliexpress.</p>
+<p>We flashed <a href="https://github.com/nodemcu/nodemcu-firmware.git" target="_blank" rel="external">NodeMCU</a> onto it and wrote some Lua code to connect to a wifi-AP and access a webpage. And it worked, most of the times at least. The stability and reliability isn’t really 100% currently, but hopefully it will be improved over time.</p>
+<h1 id="Connecting-it"><a href="#Connecting-it" class="headerlink" title="Connecting it"></a>Connecting it</h1><p>I haven’t got all the tools and power supplies yet so we had to do dirty hacks to get it to work. In order to use the chip, 3.3V and ground need to be connected to two pins each. A proper power supply and a bredboard would’ve done things easier but there’s always a way if you don’t have it.</p>
+<p>We found a dusty Raspberry Pi B and just used its 3.3 volt and ground pins. Good for us that there are multiple connectors.</p>
+<p>In order to use the chip, the following pins need to be connected:</p>
+<pre><code>+3.3V  =&gt; VCC
++3.3V  =&gt; CH_PD
+GND    =&gt; GND
+GND    =&gt; GPIO0 When flashing the firmware
+</code></pre><p>A USB-to-serial is also needed. Make sure that it uses 3.3V. I used a PL2303HX, it’s pretty cheap. Connect it:</p>
+<pre><code>GND =&gt; GND
+RX  =&gt; TX
+TX  =&gt; RX
++5V =&gt; don&apos;t connect this :)
+</code></pre><h1 id="Code-to-access-the-web"><a href="#Code-to-access-the-web" class="headerlink" title="Code to access the web"></a>Code to access the web</h1><p>After flashing NodeMCU, it’s time for some Lua scripting. It’s possible to just connect to the serial interface and just write code, but it gets really frustrating when your code grows, obviously. </p>
+<p>There’s an IDE called <a href="https://github.com/4refr0nt/ESPlorer" target="_blank" rel="external">esplorer</a> that helps you out. It’s pretty basic and written in java, but it gets the job done. There’s also an <a href="https://aur.archlinux.org/packages/esplorer/" target="_blank" rel="external">AUR package</a> for it so you can install it quickly if you run Arch.</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- Connect to a wifi-ap</span></div><div class="line">wifi.setmode(wifi.STATION)</div><div class="line">wifi.sta.<span class="built_in">config</span>(<span class="string">"your-ssid"</span>, <span class="string">"password"</span>)</div><div class="line"></div><div class="line"><span class="comment">-- Set a timer with 500ms delay and check if we've got an IP-address</span></div><div class="line">tmr.alarm(<span class="number">0</span>, <span class="number">500</span>, <span class="number">1</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">if</span> wifi.sta.getip() == <span class="literal">nil</span> <span class="keyword">then</span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"No ip yet"</span>)</div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"Got ip: "</span> .. wifi.sta.getip())</div><div class="line">        tmr.stop(<span class="number">0</span>)</div><div class="line">        reg_gpio()</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span>)</div><div class="line"></div><div class="line"><span class="comment">-- Register an interrupt on GPIO pin 3 (it's called GPIO0 on the board)</span></div><div class="line"><span class="comment">-- "both" is used because it seems to work better than simply "up". </span></div><div class="line"><span class="comment">-- This means that the callback is called whenever the pin goes high or low.</span></div><div class="line"><span class="comment">-- Not sure if it's because of a bug in the firmware or I just had bad luck</span></div><div class="line"><span class="comment">-- when testing.</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">reg_gpio</span><span class="params">()</span></span></div><div class="line">gpio.mode(<span class="number">3</span>, gpio.INT)</div><div class="line">gpio.trig(<span class="number">3</span>, <span class="string">"both"</span>, <span class="function"><span class="keyword">function</span><span class="params">(level)</span></span></div><div class="line">        <span class="built_in">print</span>(<span class="string">"both: 3  "</span> .. level)</div><div class="line">        <span class="keyword">if</span> level == <span class="number">1</span> <span class="keyword">then</span></div><div class="line">            http_get(<span class="string">"192.168.0.1"</span>, <span class="number">80</span>, <span class="string">"192.168.0.1"</span>, <span class="string">"/"</span>)</div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span>)</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment">-- A simple HTTP GET call. Not optimal but works.</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">http_get</span><span class="params">(host_addr, port, hostname, path)</span></span></div><div class="line">    <span class="built_in">print</span>(<span class="string">"http_get()"</span>)</div><div class="line">    sk=net.createConnection(net.TCP, <span class="number">0</span>)</div><div class="line">    sk:on(<span class="string">"receive"</span>, <span class="function"><span class="keyword">function</span><span class="params">(sck, c)</span></span> <span class="built_in">print</span>(c) <span class="keyword">end</span> )</div><div class="line">    sk:connect(port, host_addr)</div><div class="line">    request = <span class="string">"GET "</span> .. <span class="built_in">path</span> .. <span class="string">" HTTP/1.1\r\n"</span> ..</div><div class="line">    <span class="string">"Host: "</span> .. hostname .. <span class="string">"\r\n"</span> ..</div><div class="line">    <span class="string">"Connection: close\r\nAccept: */*\r\n\r\n"</span></div><div class="line">    <span class="built_in">print</span>(request)</div><div class="line">    sk:send(request)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>My code works most of the time but not always. It’s probably because the firmware is still a bit buggy, but hopefully it will improve.</p>
+<h1 id="Pinout-reference"><a href="#Pinout-reference" class="headerlink" title="Pinout reference"></a>Pinout reference</h1><p>Here are the pinout configurations for reference.</p>
+<p>ESP8266</p>
+<p><img src="/images/Tinkering-with-the-ESP8266_wifi.jpg" alt="Pinout configuration of ESP8266"></p>
+<p>Raspberry PI B+. A and B only have 26 pins, they are the same. <small><small><a href="http://www.element14.com/community/community/raspberry-pi/raspberry-pi-bplus/blog/2014/12/05/minecraft-on-the-raspberry-pi-model-a" target="_blank" rel="external">Source</a></small></small></p>
+<p><img src="/images/Tinkering-with-the-ESP8266_raspi.png" alt="Pinout configuration of ESP8266"></p>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/esp8266/"> #esp8266 </a>
+          
+            <a href="/tags/raspberry-pi/"> #raspberry pi </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/07/25/Bit-banging-two-pins-simultaneously-on-ESP8266/">Bit-banging two pins simultaneously on ESP8266</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/06/28/Hello-hexo-io/">Hello hexo.io</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+
+    
+      <div class="comments" id="comments">
+        
+          <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </div>
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table Of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="https://avatars1.githubusercontent.com/u/3134352?v=3&s=460" alt="Konrad Beckmann" />
+          <p class="site-author-name">Konrad Beckmann</p>
+        </div>
+        <p class="site-description motion-element"></p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">categories</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">tags</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+              <a href="https://github.com/kbeckmann" target="_blank">GitHub</a>
+            </span>
+            
+              <span class="links-of-author-item">
+              <a href="https://twitter.com/kbeckmann" target="_blank">Twitter</a>
+            </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+        
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Tinkering-with-the-ESP8266"><span class="nav-number">1.</span> <span class="nav-text">Tinkering with the ESP8266</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Connecting-it"><span class="nav-number">2.</span> <span class="nav-text">Connecting it</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Code-to-access-the-web"><span class="nav-number">3.</span> <span class="nav-text">Code to access the web</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Pinout-reference"><span class="nav-number">4.</span> <span class="nav-text">Pinout reference</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp;  2015 - 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">Konrad Beckmann</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.3"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.3"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.3" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.3" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'happychips';
+      var disqus_identifier = '2015/06/28/Tinkering-with-the-ESP8266/';
+      var disqus_title = 'Tinkering with the ESP8266';
+      var disqus_url = 'https://kbeckmann.github.io/2015/06/28/Tinkering-with-the-ESP8266/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  <script type="text/javascript" src="/js/analytics_google-analytics.js?v=0.4.3"></script>
+
+
+</body>
+</html>

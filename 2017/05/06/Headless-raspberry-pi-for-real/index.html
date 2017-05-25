@@ -1,0 +1,626 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.3"/>
+
+
+
+
+  <meta name="keywords" content="raspi,raspberry pi,headless,USB,UART,USB gadget," />
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Happychips" type="application/atom+xml" />
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.3" />
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    analytics: {
+      google: 'UA-64592242-1'
+    },
+    sidebar: 'post'
+  };
+</script>
+
+
+
+
+  <title> Headless raspberry pi (for reals) // Happychips </title>
+</head>
+
+<body>
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand">
+      <span class="logo">
+        <i class="icon-logo"></i>
+      </span>
+      <span class="site-title">Happychips</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<div class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/">
+            <i class="menu-item-icon icon-home"></i> <br />
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            <i class="menu-item-icon icon-categories"></i> <br />
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            <i class="menu-item-icon icon-about"></i> <br />
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            <i class="menu-item-icon icon-archives"></i> <br />
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            <i class="menu-item-icon icon-tags"></i> <br />
+            Tags
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              Headless raspberry pi (for reals)
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          Posted on 2017-05-06
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2017/05/06/Headless-raspberry-pi-for-real/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/06/Headless-raspberry-pi-for-real/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <p>If you want to install and interact with a raspberry pi using only a USB cable and nothing else (no UART hardware, no physical keybord, hdmi-screen, wifi, network cable etc), this guide is for you. We will set up wifi and enable ssh while we’re at it just because we can.</p>
+<p>We are going to:</p>
+<ul>
+<li>Download and install the latest raspbian-jessie-lite on an SD-card</li>
+<li>Configure the pi to act as a USB serial device</li>
+<li>Configure wpa_supplicant with your wifi AP’s credentials</li>
+<li>Create symlinks to enable systemd services on boot (wpa_supplicant, ttyGS0 and ssh)</li>
+</ul>
+<p>This guide has only been tested on a <strong>Raspberry Pi Zero W</strong>, but should work fine on other Pis.</p>
+<p>Download and transfer raspbian-jessie-light to an sdcard (assuming /dev/mmcblk0 here)<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> wget https://downloads.raspberrypi.org/raspbian_lite_latest</span></div><div class="line"><span class="meta">$</span><span class="bash"> unzip raspbian_lite_latest</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo dd <span class="keyword">if</span>=2017-04-10-raspbian-jessie-lite.img of=/dev/mmcblk0 status=progress bs=1M</span></div><div class="line"><span class="meta">$</span><span class="bash"> sync</span></div></pre></td></tr></table></figure></p>
+<p>Mount the boot partition<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash"> mkdir boot</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo mount /dev/mmcblk0p1 boot</span></div></pre></td></tr></table></figure></p>
+<p>Add the following line in the end of <code>boot/config.txt</code> to enable the DWC2 USB driver (this enables USB gadgets):<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">dtoverlay</span>=dwc2</div></pre></td></tr></table></figure></p>
+<p>Add <code>modules-load=dwc2,g_serial</code> after <code>rootwait</code> in <code>boot/cmdline.txt</code><br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Your cmdline.txt should look something like this (but might differ and that's fine)</span></div><div class="line">dwc_otg.<span class="attr">lpm_enable=0</span> <span class="attr">console=serial0,115200</span> <span class="attr">console=tty1</span> <span class="attr">root=/dev/mmcblk0p2</span> <span class="attr">rootfstype=ext4</span> <span class="attr">elevator=deadline</span> fsck.<span class="attr">repair=yes</span> rootwait <span class="attr">modules-load=dwc2,g_serial</span> quiet <span class="attr">init=/usr/lib/raspi-config/init_resize.sh</span></div></pre></td></tr></table></figure></p>
+<p>Let’s configure the root filesystem.<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> Mount the root partition</span></div><div class="line"><span class="meta">$</span><span class="bash"> mkdir root</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo mount /dev/mmcblk0p2 root</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> root</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Configure your wifi credentials by editing /etc/wpa_supplicant/wpa_supplicant.conf</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo vim etc/wpa_supplicant/wpa_supplicant.conf</span></div><div class="line"></div><div class="line">ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev</div><div class="line">update_config=1</div><div class="line">network=&#123;</div><div class="line">    ssid="Your SSID"</div><div class="line">    psk="Password"</div><div class="line">&#125;</div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Save and <span class="built_in">exit</span></span></div><div class="line"><span class="meta"></span></div><div class="line"></div><div class="line">#<span class="bash"> Fake systemctl <span class="built_in">enable</span> wpa_supplicant.service</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ./etc/systemd/system/multi-user.target.wants</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo ln <span class="_">-s</span> ../../../../lib/systemd/system/wpa_supplicant.service</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Fake systemctl <span class="built_in">enable</span> ssh.service</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo ln <span class="_">-s</span> ../../../../lib/systemd/system/ssh.service</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Fake systemctl <span class="built_in">enable</span> getty@ttyGS0.service</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ../getty.target.wants</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo ln <span class="_">-s</span> /lib/systemd/system/getty@.service getty@ttyGS0.service</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Done! Sync and unmount</span></div><div class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> ../../../../..; sync; sudo umount boot root</span></div></pre></td></tr></table></figure></p>
+<p>Remove the sd-card and insert it in your Pi, connect a USB cable in the “USB Data port”, then connect it to your computer. Run <code>journalctl -f</code> on your host machine to see what happens then the Pi boots. After a while, you will probably end up seeing<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">May</span> 06 21<span class="selector-pseudo">:04</span><span class="selector-pseudo">:54</span> <span class="selector-tag">bacon</span> <span class="selector-tag">kernel</span>: <span class="selector-tag">cdc_acm</span> 1<span class="selector-tag">-2</span><span class="selector-pseudo">:2.0</span>: <span class="selector-tag">ttyACM0</span>: <span class="selector-tag">USB</span> <span class="selector-tag">ACM</span> <span class="selector-tag">device</span></div></pre></td></tr></table></figure></p>
+<p>Go ahead now and connect to the device using <code>screen /dev/ttyACM0 115200</code> and interact with your raspi. In case you’ve never used <code>screen</code> before: exit using <code>&lt;Ctrl&gt;-a d</code>.</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">pi<span class="variable">@raspberrypi</span><span class="symbol">:~</span><span class="variable">$ </span>uname -a</div><div class="line">Linux raspberrypi <span class="number">4.4</span>.<span class="number">50</span>+ <span class="comment">#970 Mon Feb 20 19:12:50 GMT 2017 armv6l GNU/Linux</span></div></pre></td></tr></table></figure>
+<h3 id="Alternative-solution-using-qemu-arm-static-not-recommended"><a href="#Alternative-solution-using-qemu-arm-static-not-recommended" class="headerlink" title="Alternative solution using qemu-arm-static (not recommended)"></a>Alternative solution using qemu-arm-static (not recommended)</h3><p>While writing this guide I used <code>qemu-arm-static</code> in order to enable the systemd services. This turned out to be really messy (segfault in strange places etc). If you want to try this approach, feel free to change the symlink steps above to the following:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> Install qemu-user-static. On archlinux with AUR:</span></div><div class="line"><span class="meta">$</span><span class="bash"> pacaur -S qemu-user-static</span></div><div class="line"><span class="meta">#</span><span class="bash"> Ubuntu:</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo apt-get install qemu-user-static</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Copy qemu-arm-static to the root filesystem</span></div><div class="line"><span class="meta">$</span><span class="bash"> sudo cp $(<span class="built_in">which</span> qemu-arm-static) ./usr/bin/</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> Enter the pi<span class="string">'s root filesystem by running the local bash(dash) using `qemu-arm-static`</span></span></div><div class="line"><span class="meta">$</span><span class="bash"><span class="string"> sudo chroot . ./usr/bin/qemu-arm-static /bin/bash</span></span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="string"> We are now in the mounted root filesystem.</span></span></div><div class="line"><span class="meta">#</span><span class="bash"><span class="string"> Enable wpa_supplicant so that it runs on boot</span></span></div><div class="line"><span class="meta">%</span><span class="bash"><span class="string"> qemu-arm-static /bin/systemctl enable wpa_supplicant.service</span></span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="string"> Enable the USB TTY service</span></span></div><div class="line"><span class="meta">%</span><span class="bash"><span class="string"> qemu-arm-static /bin/systemctl enable getty@ttyGS0.service</span></span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="string"> Enable SSH (this might result in a segfault...)</span></span></div><div class="line"><span class="meta">%</span><span class="bash"><span class="string"> qemu-arm-static /bin/systemctl enable ssh.service</span></span></div></pre></td></tr></table></figure>
+<h3 id="More-reading"><a href="#More-reading" class="headerlink" title="More reading"></a>More reading</h3><p><a href="https://learn.adafruit.com/turning-your-raspberry-pi-zero-into-a-usb-gadget?view=all" target="_blank" rel="external">Adafruit’s article on how to enable the USB gadgets</a><br><a href="https://cateee.net/lkddb/web-lkddb/USB_DWC2.html" target="_blank" rel="external">CONFIG_USB_DWC2: DesignWare USB2 DRD Core Support</a><br><a href="http://www.linux-usb.org/gadget/" target="_blank" rel="external">Linux-USB Gadget API Framework</a></p>
+
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/raspi/"> #raspi </a>
+          
+            <a href="/tags/raspberry-pi/"> #raspberry pi </a>
+          
+            <a href="/tags/headless/"> #headless </a>
+          
+            <a href="/tags/USB/"> #USB </a>
+          
+            <a href="/tags/UART/"> #UART </a>
+          
+            <a href="/tags/USB-gadget/"> #USB gadget </a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/26/QEMU-instead-of-cross-compiling/">Using QEMU instead of cross compiling for raspberry pi</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/25/ham.js/">Morse generator without clicks</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </div>
+  </div>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+
+    
+      <div class="comments" id="comments">
+        
+          <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </div>
+        
+      </div>
+    
+  </div>
+
+
+        </div>
+
+        
+      </div>
+
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table Of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview">
+        <div class="site-author motion-element">
+          <img class="site-author-image" src="https://avatars1.githubusercontent.com/u/3134352?v=3&s=460" alt="Konrad Beckmann" />
+          <p class="site-author-name">Konrad Beckmann</p>
+        </div>
+        <p class="site-description motion-element"></p>
+        <div class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-name">categories</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">23</span>
+              <span class="site-state-item-name">tags</span>
+              </a>
+          </div>
+
+        </div>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+              <a href="https://github.com/kbeckmann" target="_blank">GitHub</a>
+            </span>
+            
+              <span class="links-of-author-item">
+              <a href="https://twitter.com/kbeckmann" target="_blank">Twitter</a>
+            </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+        
+      </div>
+
+      
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Alternative-solution-using-qemu-arm-static-not-recommended"><span class="nav-number">1.</span> <span class="nav-text">Alternative solution using qemu-arm-static (not recommended)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#More-reading"><span class="nav-number">2.</span> <span class="nav-text">More reading</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
+
+    </div>
+  </div>
+
+
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp;  2015 - 
+  2017
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">Konrad Beckmann</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.3"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.3"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.3" id="motion.global"></script>
+
+
+
+  <script type="text/javascript" src="/js/search-toggle.js"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.3" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+    });
+  </script>
+
+  
+
+  
+  
+  
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'happychips';
+      var disqus_identifier = '2017/05/06/Headless-raspberry-pi-for-real/';
+      var disqus_title = 'Headless raspberry pi (for reals)';
+      var disqus_url = 'https://kbeckmann.github.io/2017/05/06/Headless-raspberry-pi-for-real/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+  <script type="text/javascript" src="/js/analytics_google-analytics.js?v=0.4.3"></script>
+
+
+</body>
+</html>
